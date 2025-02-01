@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
+import { Link, useNavigate } from "react-router-dom";
+import uploadFile from "../helpers/uploadFile";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const RegisterPage = () => {
   const [data, setData] = useState({
@@ -17,11 +21,12 @@ const RegisterPage = () => {
       return { ...prev, [name]: value };
     });
   };
+
   const handleUploadPhoto = async (e) => {
     const file = e.target.files[0];
 
-    // const uploadPhoto = await uploadFile(file);
-
+    const uploadPhoto = await uploadFile(file);
+    console.log("uploadPhoto", uploadPhoto);
     setUploadPhoto(file);
 
     setData((prev) => {
@@ -37,11 +42,38 @@ const RegisterPage = () => {
     e.preventDefault();
     setUploadPhoto(null);
   };
+
+  const handleSubmit = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const URL = `${process.env.REACT_APP_BACKEND_URL}/api/register`;
+    try {
+      const response = await axios.post(URL, data);
+      console.log("response", response);
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setData({
+          name: "",
+          email: "",
+          password: "",
+          profile_pic: "",
+        });
+
+        // navigate("/email");
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+    console.log("data", data);
+  };
+
   return (
     <div className="mt-5">
       <div className="bg-white w-full max-w-md  rounded overflow-hidden p-4 mx-auto">
         <h3>Welcome to Chat app!</h3>
-        <form className="grid gap-4 mt-5">
+        <form className="grid gap-4 mt-5" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1">
             <label htmlFor="name">Name :</label>
             <input
@@ -113,6 +145,12 @@ const RegisterPage = () => {
             Register
           </button>
         </form>
+        <p className="my-3 text-center">
+          Already have account ?{" "}
+          <Link to={"/email"} className="hover:text-primary font-semibold">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
