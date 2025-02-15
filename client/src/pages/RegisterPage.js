@@ -14,6 +14,7 @@ const RegisterPage = () => {
   });
 
   const [uploadPhoto, setUploadPhoto] = useState("");
+  const navigate = useNavigate();
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -52,8 +53,9 @@ const RegisterPage = () => {
       const response = await axios.post(URL, data);
       console.log("response", response);
 
+      toast.success(response.data.message);
+
       if (response.data.success) {
-        toast.success(response.data.message);
         setData({
           name: "",
           email: "",
@@ -61,7 +63,7 @@ const RegisterPage = () => {
           profile_pic: "",
         });
 
-        // navigate("/email");
+        navigate("/email");
       }
     } catch (error) {
       toast.error(error?.response?.data?.message);
@@ -146,7 +148,7 @@ const RegisterPage = () => {
           </button>
         </form>
         <p className="my-3 text-center">
-          Already have account ?{" "}
+          Already have an account ?{" "}
           <Link to={"/email"} className="hover:text-primary font-semibold">
             Login
           </Link>
