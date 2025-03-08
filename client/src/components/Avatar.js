@@ -39,7 +39,7 @@ const Avatar = ({ userId, name, imageUrl, width, height }) => {
           width={width}
           height={height}
           alt={name}
-          className="overflow-hidden rounded-full"
+          className="w-10 h-10 rounded-full object-cover"
         />
       ) : name ? (
         <div
